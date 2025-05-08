@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Excluir {{ object.titulo }}{% endblock %}
+
+{% block header %}Confirmar Exclusão{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title mb-4">Tem certeza que deseja excluir "{{ object.titulo }}"?</h5>
+        
+        <div class="alert alert-warning">
+            <p class="mb-0">
+                Esta ação não pode ser desfeita. Todos os dados desta série serão permanentemente removidos.
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-danger">Confirmar Exclusão</button>
+                <a href="{% url 'series-detail' object.pk %}" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
