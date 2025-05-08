@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load series_tags %}
+
+{% block title %}{{ object.titulo }}{% endblock %}
+
+{% block header %}{{ object.titulo }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-8">
+                <h4 class="card-title mb-4">Detalhes da Série</h4>
+                
+                <div class="mb-3">
+                    <h5>Sinopse</h5>
+                    <p class="card-text">{{ object.sinopse }}</p>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5>Ano de Lançamento</h5>
+                        <p class="card-text">{{ object.ano_lancamento }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Temporadas</h5>
+                        <p class="card-text">{{ object.temporadas|format_temporadas }}</p>
+                    </div>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'series-update' object.pk %}" class="btn btn-warning">
+                        Editar
+                    </a>
+                    <a href="{% url 'series-delete' object.pk %}" class="btn btn-danger">
+                        Excluir
+                    </a>
+                    <a href="{% url 'series-list' %}" class="btn btn-secondary">
+                        Voltar à Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
