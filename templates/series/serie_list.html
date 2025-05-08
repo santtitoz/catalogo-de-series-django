@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load series_tags %}
+
+{% block title %}Lista de Séries{% endblock %}
+
+{% block header %}Lista de Séries{% endblock %}
+
+{% block content %}
+<!-- Filtro e Ordenação -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="ano" class="form-label">Ano de Lançamento</label>
+                <input type="number" name="ano" id="ano" class="form-control" value="{{ request.GET.ano }}" placeholder="Filtrar por ano">
+            </div>
+            <div class="col-md-4">
+                <label for="ordering" class="form-label">Ordenar por</label>
+                <select name="ordering" id="ordering" class="form-select">
+                    <option value="">Selecione...</option>
+                    <option value="titulo" {% if request.GET.ordering == "titulo" %}selected{% endif %}>Título</option>
+                    <option value="ano_lancamento" {% if request.GET.ordering == "ano_lancamento" %}selected{% endif %}>Ano de Lançamento</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Filtrar</button>
+                {% if request.GET.ano or request.GET.ordering %}
+                    <a href="{% url 'series-list' %}" class="btn btn-secondary ms-2">Limpar Filtros</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Lista de Séries -->
+<div class="row">
+    {% for serie in object_list %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ serie.titulo }}</h5>
+                    <p class="card-text">{{ serie.sinopse|truncatewords:30 }}</p>
+                    <p class="card-text">
+                        <small class="text-muted">
+                            Ano: {{ serie.ano_lancamento }} | 
+                            {{ serie.temporadas|format_temporadas }}
+                        </small>
+                    </p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'series-detail' serie.pk %}" class="btn btn-primary btn-sm">Ver Detalhes</a>
+                    <a href="{% url 'series-update' serie.pk %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'series-delete' serie.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                Nenhuma série encontrada.
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Paginação -->
+{% if is_paginated %}
+<nav aria-label="Navegação de páginas">
+    <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}{% if request.GET.ordering %}&ordering={{ request.GET.ordering }}{% endif %}">Primeira</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}{% if request.GET.ordering %}&ordering={{ request.GET.ordering }}{% endif %}">Anterior</a>
+            </li>
+        {% endif %}
+
+        <li class="page-item active">
+            <span class="page-link">
+                Página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+            </span>
+        </li>
+
+        {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}{% if request.GET.ordering %}&ordering={{ request.GET.ordering }}{% endif %}">Próxima</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.ano %}&ano={{ request.GET.ano }}{% endif %}{% if request.GET.ordering %}&ordering={{ request.GET.ordering }}{% endif %}">Última</a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}
+
+<div class="text-center mt-4">
+    <a href="{% url 'series-create' %}" class="btn btn-success">Adicionar Nova Série</a>
+</div>
+{% endblock %}
